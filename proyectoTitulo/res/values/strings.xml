@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    
+<!-- view login -->    
+    <string name="app_name">Altos del Yali</string>
+    <string name="imgLogin">Inmobiliaria</string>
+    <string name="txtUser">user</string>
+    <string name="txtPass">password</string>
+    <string name="validarUser">Acceder</string>
+    <string name="listaParcelas">Parcelas</string>
+    
+    <string name="listaParcelas2">Parcelas</string>
+    
+    <string name="refresh">Refresh</string>
+
+<!-- view generales -->
+    
+    
+<!-- vista lista parcela -->
+	<string name="title_activity_home">Lista Parcelas</string>    
+	
+	<string name="title_activity_home2">Lista Parcelas</string>    
+    
+    
+<!-- view detalle -->
+	<string name="title_activity_detalle">Detalle Parcela</string>
+    <string name="nombre">Nombre:</string>
+    <string name="txtnombre">Nombre:</string>
+    
+    <string name="lugar">Lugar:</string>
+    <string name="txtlugar">Nombre:</string>
+    
+    <string name="precio">Precio: </string>
+    <string name="txtprecio">Nombre:</string>
+    
+    <string name="metros">MT2:</string>
+    <string name="txtmetros">Nombre:</string>
+    
+    <string name="cancelar">Atrás</string>
+    <string name="reservar">Reservar</string>
+    
+    
+    
+</resources>
