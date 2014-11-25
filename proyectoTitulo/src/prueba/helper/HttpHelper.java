@@ -1,6 +1,7 @@
 package prueba.helper;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -20,13 +21,33 @@ import android.util.Log;
 public class HttpHelper {
 
 	InputStream is = null;
-	String result = "";
+    String resultado = "";
+    String algo="";
 
-	public JSONArray getServerData(ArrayList<NameValuePair> parameters, String urlwebserver) {
+	public JSONArray getServerData(ArrayList<NameValuePair> parameters, String urlwebserver) throws JSONException {
 		httpPostConnect(parameters, urlwebserver);
 		if (is != null) {
-			getPostResponse();
-			return getJsonArray();
+			try{
+			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+			StringBuilder sb = new StringBuilder();
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+			is.close();
+			resultado = sb.toString();
+			Log.e("getPostResponse", "resultado= " + sb.toString());
+			}catch(IOException e){
+				
+			}
+			
+			
+//			getPostResponse();
+			Log.d("getServerData", "hola");
+//			return getJsonArray();
+			JSONArray jsonA = new JSONArray(resultado);
+//			JSONArray jsonA = new JSONArray(getPostResponse());
+			return jsonA;
 		} else {
 			return null;
 		}
@@ -46,32 +67,35 @@ public class HttpHelper {
 		}
 	}
 
+	/*
 	public void getPostResponse() {
 		try {
-			//BufferedReader reader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"), 8);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8"), 8);
-			//BufferedReader r = new BufferedReader(new InputStre)
+//			BufferedReader reader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"), 8);
+//			BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8"), 8);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 			StringBuilder sb = new StringBuilder();
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				sb.append(line + "\n");
 			}
 			is.close();
-			result = sb.toString();
-			Log.e("getPostResponse", "result= " + sb.toString());
+			resultado = sb.toString();
+			Log.e("getPostResponse", "resultado= " + sb.toString());
 		} catch (Exception e) {
 			Log.e("Error", "Error al leer result " + e.toString());
 		}
-	}
 
+	}
+*/
+/*
 	public JSONArray getJsonArray() {
 		try {
-			JSONArray jsonA = new JSONArray(result);
+			JSONArray jsonA = new JSONArray(resultado);
 			return jsonA;
 		} catch (JSONException e) {
 			Log.e("log_tag", "Error parsing data " + e.toString());
 			return null;
 		}
 	}
-
+*/
 }

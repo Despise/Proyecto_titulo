@@ -16,10 +16,14 @@ import clases.parcela;
 import prueba.helper.ListViewAdapter;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -45,6 +49,7 @@ public class Home2 extends Activity{
 	
 	
 	int[] imgBase = {R.drawable.disponible, R.drawable.vendida, R.drawable.reservada};
+	int[] imgBase2 = {R.drawable.reserva_green, R.drawable.reserva_red, R.drawable.reserva_yellow};
 	int[] imgDelList;
 	
 	ListViewAdapter adapter;
@@ -59,6 +64,30 @@ public class Home2 extends Activity{
 	}
 	
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu){
+		//MenuInflater infM = getMenuInflater();
+		//infM.inflate(R.menu.menu_principal, menu);
+		getMenuInflater().inflate(R.menu.menu_principal, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()){
+			case R.id.refresh:
+				Mostrar x = new Mostrar();
+				x.execute();
+				break;
+			case R.id.Cerrar:
+				finish();
+			default:
+				break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	
+	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
@@ -68,11 +97,21 @@ public class Home2 extends Activity{
 	private class Mostrar extends AsyncTask<String, Integer, Boolean>{
 		
 		JSONObject obj;
+		ProgressDialog pDialog = new ProgressDialog(Home2.this);
 		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pDialog.setMessage("Cargando datos...");
+			pDialog.setIndeterminate(false);
+			pDialog.setCancelable(false);
+			pDialog.show();
+		}
+		@Override
 		protected Boolean doInBackground(String... params){
 			boolean result = true;
 			HttpClient httpClient = new DefaultHttpClient();
-			HttpPost del = new HttpPost("http://192.168.1.37/webservice/llenaListView");
+			HttpPost del = new HttpPost("http://192.168.1.50/webservice/llenaListView");
 			
 	        try{                      
 	        	HttpResponse resp = httpClient.execute(del);
@@ -82,7 +121,7 @@ public class Home2 extends Activity{
 	        	id = new String[respJSON.length()];
 	        	estado = new String[respJSON.length()];
 	        	imgDelList = new int[respJSON.length()];
-	        	
+	        	SystemClock.sleep(200);
 	        	for(int i=0; i<respJSON.length(); i++){
 	        		obj = respJSON.getJSONObject(i);
 	        		
@@ -97,9 +136,9 @@ public class Home2 extends Activity{
 	        		//1 disponible
 	        		//2 vendida
 	        		//3 reservada
-	        		if(statusDeParcela.equals("1"))imgDelList[i] = imgBase[0];    		
-	        		if(statusDeParcela.equals("2"))imgDelList[i] = imgBase[1];
-	        		if(statusDeParcela.equals("3"))imgDelList[i] = imgBase[2];      		
+	        		if(statusDeParcela.equals("1"))imgDelList[i] = imgBase2[0];    		
+	        		if(statusDeParcela.equals("2"))imgDelList[i] = imgBase2[1];
+	        		if(statusDeParcela.equals("3"))imgDelList[i] = imgBase2[2];      		
 	        	}
 	        } catch (Exception ex){
 	        	Log.e("ServicioRest","Error!", ex);
@@ -108,7 +147,7 @@ public class Home2 extends Activity{
 
 	        return result;
 		}
-		
+		@Override
 		protected void onPostExecute(Boolean result) {
 			//Rellenamos la lista con los nombres de las parcelas
 	        //Rellenamos la lista con los resultados
@@ -116,7 +155,7 @@ public class Home2 extends Activity{
 			
 			adapter = new ListViewAdapter(Home2.this, parcelas, id, imgDelList);
 			
-//			adapter = new ListViewAdapter(Home2.this, parcelas, imgBase);
+//			adapter = new ListViewAdapter(Home2.this, parcelas, imgDelList);
 
 			
 	        listView = (ListView) findViewById(R.id.listaParcelas2);    
@@ -138,6 +177,7 @@ public class Home2 extends Activity{
 				}
 			
 	        });
+	        pDialog.dismiss();
 	   }
 		
 	}

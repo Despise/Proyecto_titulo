@@ -55,14 +55,14 @@ public class ListViewAdapter extends BaseAdapter{
 		TextView idParcela;
 		
 		inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View itemView = inflater.inflate(R.layout.list_row, parent, false);
-		txtTitle = (TextView) itemView.findViewById(R.id.list_row_title);
-		imgImg = (ImageView) itemView.findViewById(R.id.list_row_img);
-		idParcela = (TextView) itemView.findViewById(R.id.list_row_id);
+		View itemView = inflater.inflate(R.layout.lista_rows, parent, false);
+		txtTitle = (TextView) itemView.findViewById(R.id.list_row_title2);
+		imgImg = (ImageView) itemView.findViewById(R.id.list_row_img2);
+//		idParcela = (TextView) itemView.findViewById(R.id.list_row_id);
 
 		txtTitle.setText(parcelas[position]);
 		imgImg.setImageResource(imagenes[position]);
-		idParcela.setText(id[position]);
+//		idParcela.setText(id[position]);
 		
 		return itemView;
 		

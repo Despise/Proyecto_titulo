@@ -32,7 +32,7 @@
         
         <activity 
             android:name=".Home2"
-            android:label="@string/title_activity_home2" >
+            android:label="@string/app_name" >
             <meta-data 
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Home2" />
@@ -41,7 +41,7 @@
         <activity 
             android:name=".DetalleParcela"
             android:parentActivityName=".Home2"
-            android:label="@string/title_activity_detalle" >
+            android:label="@string/app_name" >
             
         </activity>        
         

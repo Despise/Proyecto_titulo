@@ -1,13 +1,20 @@
 package prueba.login;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import prueba.helper.EncriptarMD5;
 import prueba.helper.HttpHelper;
 import android.app.Activity;
@@ -30,15 +37,15 @@ public class MainActivity extends Activity {
 	EditText user;
 	EditText pass;
 	Button bLogin;
-	HttpHelper post;
+	HttpHelper post = new HttpHelper();
 	//String IP_Server = "proyectodetitulo.com";
-	String URL_CONNECT = "http://192.168.1.37/webservice/login";
+	protected String URL_CONNECT = "http://192.168.1.50/webservice/login";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		post = new HttpHelper();
+//		HttpHelper post = new HttpHelper();
 		user = (EditText) findViewById(R.id.txtUser);
 		pass = (EditText) findViewById(R.id.txtPass);
 		bLogin = (Button) findViewById(R.id.acceder);
@@ -54,7 +61,7 @@ public class MainActivity extends Activity {
 				if (checkDatos(usuario, passw) == true) {
 					new AsyncLogin().execute(usuario, passw);
 				} else {
-					failLogin();
+					failVacio();
 				}
 			}
 		});
@@ -89,24 +96,39 @@ public class MainActivity extends Activity {
 				"Credenciales invalidas !", Toast.LENGTH_SHORT);
 		tt.show();
 	}
+	
+	public void failVacio() {
+		Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+		v.vibrate(200);
+		Toast tt = Toast.makeText(getApplicationContext(),
+				"Ingrese USER y PASS !", Toast.LENGTH_SHORT);
+		tt.show();
+	}
 
-	public boolean loginStatus(String username, String password) {
-		int logstatus = -1;
+	public boolean loginStatus(String username, String password) throws JSONException {
+//		int logstatus = -1;
+//		String logstatusStr;
+		String logstatus = "";
 		ArrayList<NameValuePair> postParametersSend = new ArrayList<NameValuePair>();
 		postParametersSend.add(new BasicNameValuePair("usuario", username));
 		postParametersSend.add(new BasicNameValuePair("password", password));
 		JSONArray jdata = post.getServerData(postParametersSend, URL_CONNECT);
-		SystemClock.sleep(950);
+		Log.e("Jsonarray", jdata.toString());
+		SystemClock.sleep(500);
 		if (jdata != null && jdata.length() > 0) {
-			JSONObject json_data;
 			try {
-				json_data = jdata.getJSONObject(0);
-				logstatus = json_data.getInt("logstatus");
-				Log.e("loginstatus", "logstatus= " + logstatus);
+				Log.d("Antesde ", "adawd");
+				JSONObject json_data = jdata.getJSONObject(0);
+//				logstatus = json_data.getInt("logstatus");
+				logstatus = json_data.getString("logstatus");
+//				logstatusStr = json_data.getString("logstatus");
+//				logstatus = Integer.parseInt(logstatusStr);
+				Log.e("loginstatus_Parte json", "logstatus= " + logstatus);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			if (logstatus == 0) {
+		//	if (logstatus == 0) {
+			if (logstatus.equals("0")) {
 				Log.e("loginstatus", "Invalido");
 				return false;
 			} else {
@@ -129,48 +151,67 @@ public class MainActivity extends Activity {
 		}
 	}
 
-   class AsyncLogin extends AsyncTask<String, String, String> {
-		String user, pass;
+	class AsyncLogin extends AsyncTask<String, String, String> {
+		String useR, pasS;
 		ProgressDialog pDialog = new ProgressDialog(MainActivity.this);
-	
+
 		@Override
-		protected void onPreExecute(){
-			//ProgressDialog pDialog = new ProgressDialog(MainActivity.this);
+		protected void onPreExecute() {
 			pDialog.setMessage("Conectando...");
 			pDialog.setIndeterminate(false);
 			pDialog.setCancelable(false);
 			pDialog.show();
 		}
-		
+
 		@Override
 		protected String doInBackground(String... params) {
-			user = params[0];
-			pass = params[1];
-			String re = (loginStatus(user,pass) == true) ? "Ok" : "err"; 
-			return re;
+
+			String prueba = "\"no\"";
+			String algo="";
+			
+			///////
+			
+			try {
+				HttpClient httpclient = new DefaultHttpClient();
+				HttpPost httppost = new HttpPost(URL_CONNECT);
+				List<NameValuePair> p = new ArrayList<NameValuePair>();
+				p.add(new BasicNameValuePair("username", params[0]));
+				p.add(new BasicNameValuePair("password", params[1]));
+				httppost.setEntity(new UrlEncodedFormEntity(p));
+				
+				HttpResponse r = httpclient.execute(httppost);
+				HttpEntity ent = r.getEntity();
+				
+				algo = EntityUtils.toString(ent);
+				
+			
+			} catch (Exception e) {
+				Log.e("ERROR", "No se k mierda");
+			}
+			if (algo.equals(prueba)) {
+				Log.e("loginstatus", "Valido "+ algo);
+				return "Err";
+			} else {
+				Log.e("loginstatus", "Invalido "+ algo);
+				return "Ok";
+			}
 		}
-		
+
 		@Override
-		protected void onPostExecute(String result){
-		//	ProgressDialog pDialog;
+		protected void onPostExecute(String result) {
+			// ProgressDialog pDialog;
+			String o = "Ok";
 			pDialog.dismiss();
-			Log.e("onPostExecute= ",""+result);
-			if(result.equals("Ok")){
-	/*			Intent i = new Intent(MainActivity.this, Home2.class);
-				i.putExtra("user", user);
-				startActivity(i);
+			Log.e("onPostExecute= ", result);
+			if (result.equals(o)) {
+				startActivity(new Intent(MainActivity.this, Home2.class)
+						.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+								| Intent.FLAG_ACTIVITY_SINGLE_TOP));
 				finish();
-	*/
-			startActivity(new Intent(getBaseContext(), Home2.class)
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
-            //	.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-			finish();
-    			
-			}else{
+			} else {
 				failLogin();
 			}
 		}
 
 	}
-
 }
