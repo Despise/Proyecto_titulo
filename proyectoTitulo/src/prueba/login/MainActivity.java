@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
 	Button bLogin;
 	HttpHelper post = new HttpHelper();
 	//String IP_Server = "proyectodetitulo.com";
-	protected String URL_CONNECT = "http://192.168.1.50/webservice/login";
+	protected String URL_CONNECT = "http://192.168.1.36/webservice/login";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

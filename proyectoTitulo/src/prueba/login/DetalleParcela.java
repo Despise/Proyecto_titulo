@@ -47,9 +47,9 @@ public class DetalleParcela extends Activity {
 	String tipoNueva = "3";
 	Button btnBack, btnReservar;
 	Bundle b;
-	String[] nomParcela, lugarParcela, mts2Parcela, precioParcela;
+	String[] nomParcela, lugarParcela, mtsParcela, precioParcela;
 	protected String nombreP, lugarP, mts2P, precioP;
-	protected String URL_SERVER = "192.168.1.50";
+	protected String URL_SERVER = "192.168.1.36";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +105,8 @@ public class DetalleParcela extends Activity {
 				}else{
 					AlertDialog.Builder b = new AlertDialog.Builder(DetalleParcela.this);
 					b.setTitle("Alerta !");
-					b.setMessage("Parcela NO DISPONIBLE para reservar.");
+					b.setIcon(R.drawable.ex);
+					b.setMessage("Parcela NO DISPONIBLE !");
 					b.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -182,15 +183,15 @@ public class DetalleParcela extends Activity {
 				JSONArray respJSON = new JSONArray(result);
 				nomParcela = new String[respJSON.length()];
 				lugarParcela = new String[respJSON.length()];
-//				mts2Parcela = new String[respJSON.length()];
+				mtsParcela = new String[respJSON.length()];
 				precioParcela = new String[respJSON.length()];
 				//time
 				for (int i = 0; i < respJSON.length(); i++) {
 					obj = respJSON.getJSONObject(i);		
 					nomParcela[i] = obj.getString("nombre");
-					lugarParcela[i] = obj.getString("direccion");;
-//	    			mtsParcela[i] = mts2P;
-					precioParcela[i] = obj.getString("precio");;
+					lugarParcela[i] = obj.getString("direccion");
+	    			mtsParcela[i] = obj.getString("metros");
+					precioParcela[i] = obj.getString("precio");
 				} 
 				
 			} catch (Exception e) {
@@ -204,7 +205,7 @@ public class DetalleParcela extends Activity {
 			super.onPostExecute(result);
 			txtNombre.setText(nomParcela[0]);
 			txtLugar.setText(lugarParcela[0]);
-//			txtMetros.setText(mtsParcela[i]);		
+			txtMetros.setText(mtsParcela[0]);		
 			txtPrecio.setText(precioParcela[0]);
 			SystemClock.sleep(200);
 			p.dismiss();

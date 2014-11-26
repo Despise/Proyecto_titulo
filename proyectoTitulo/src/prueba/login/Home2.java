@@ -111,7 +111,7 @@ public class Home2 extends Activity{
 		protected Boolean doInBackground(String... params){
 			boolean result = true;
 			HttpClient httpClient = new DefaultHttpClient();
-			HttpPost del = new HttpPost("http://192.168.1.50/webservice/llenaListView");
+			HttpPost del = new HttpPost("http://192.168.1.36/webservice/llenaListView");
 			
 	        try{                      
 	        	HttpResponse resp = httpClient.execute(del);
